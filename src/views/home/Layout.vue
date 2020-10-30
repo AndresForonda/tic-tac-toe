@@ -14,7 +14,7 @@ export default {
 </script>
 <style scoped>
 section {
-  height: 80vh;
+  height: 100vh;
   background: rgb(246, 119, 46);
   background: linear-gradient(
     0deg,
