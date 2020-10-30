@@ -104,4 +104,11 @@ img {
     rgba(253, 45, 45, 1) 100%
   );
 }
+.linear-purple-background {
+  background: linear-gradient(
+    0deg,
+    rgb(178, 15, 211) 0%,
+    rgb(101, 4, 170) 100%
+  );
+}
 </style>
