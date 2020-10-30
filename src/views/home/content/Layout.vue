@@ -7,6 +7,9 @@
         @restart-game="restartGame"
       />
     </transition>
+    <transition name="fade">
+      <draw-banner v-show="draw" @restart-game="restartGame" />
+    </transition>
     <div class="app-title">Pizz Tac Coe</div>
     <div class="row">
       <cell :player="ticTacToeField['1']" br bb />
@@ -23,11 +26,14 @@
       <cell :player="ticTacToeField['8']" br />
       <cell :player="ticTacToeField['9']" />
     </div>
+    <turn :player="player" :number="turn" />
   </div>
 </template>
 <script>
 import Cell from "./components/Cell";
 import WinnerBanner from "./components/WinnerBanner";
+import DrawBanner from "./components/DrawBanner";
+import Turn from "./components/Turn";
 
 const initialTicTacToe = {
   "1": null,
@@ -39,52 +45,76 @@ const initialTicTacToe = {
   "7": null,
   "8": null,
   "9": null
-}
+};
 
 export default {
   name: "ContentBoard",
   components: {
     Cell,
+    DrawBanner,
+    Turn,
     WinnerBanner
   },
   sockets: {
     connect() {
-      console.log("[Connected to socket]")
+      console.log("[Connected to socket]");
+      this.restartGame();
+      this.nextTurn();
     },
     movement({ digit, number }) {
       this.makeMovement(digit, number);
     }
   },
+  computed: {
+    player() {
+      return this.turn === "5000" ? this.player1 : this.player2;
+    }
+  },
   data: () => ({
-    somebodyWon: false,
-    winner: "",
+    draw: false,
     player1: "🍕",
     player2: "🌮",
+    somebodyWon: false,
+    ticTacToeField: { ...initialTicTacToe },
     turn: "5000",
-    ticTacToeField: { ...initialTicTacToe }
+    winner: ""
   }),
   methods: {
     restartGame() {
       this.somebodyWon = false;
+      this.draw = false;
       this.ticTacToeField = { ...initialTicTacToe };
+      this.nextTurn();
       this.$socket.client.emit("playAgain");
     },
     makeMovement(digit, number) {
-      console.log(digit, number);
       if (this.turn === number) {
         this.ticTacToeField[digit] =
           number === "5000" ? this.player1 : this.player2;
-        const winner = this.validateWin();
-        if (winner) {
+        if (this.validateWin()) {
           this.somebodyWon = true;
           this.winner = this.turn === "5000" ? this.player1 : this.player2;
         }
         // this.$socket.client.emit("message");
-        this.nextTurn();
+        else if (this.validateDraw()) {
+          this.draw = true;
+        } else {
+          this.nextTurn();
+        }
       }
     },
     nextTurn() {
       this.turn === "5000" ? (this.turn = "5001") : (this.turn = "5000");
+      this.$socket.client.emit("setTurn", this.turn);
+    },
+    validateDraw() {
+      let draw = true;
+      for (let i = 1; i <= 9; i += 1) {
+        if (!this.ticTacToeField[i]) {
+          draw = false;
+        }
+      }
+      return draw;
     },
     validateWin() {
       return (
@@ -128,7 +158,8 @@ export default {
   justify-content: center;
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
