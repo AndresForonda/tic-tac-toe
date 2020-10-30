@@ -1,5 +1,12 @@
 <template>
   <div>
+    <transition name="fade">
+      <winner-banner
+        :winner="winner"
+        v-show="somebodyWon"
+        @restart-game="restartGame"
+      />
+    </transition>
     <div class="app-title">Pizz Tac Coe</div>
     <div class="row">
       <cell :player="ticTacToeField['1']" br bb />
@@ -20,43 +27,59 @@
 </template>
 <script>
 import Cell from "./components/Cell";
+import WinnerBanner from "./components/WinnerBanner";
+
+const initialTicTacToe = {
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": null,
+  "5": null,
+  "6": null,
+  "7": null,
+  "8": null,
+  "9": null
+}
+
 export default {
   name: "ContentBoard",
   components: {
-    // Row,
-    Cell
+    Cell,
+    WinnerBanner
   },
   sockets: {
     connect() {
-      console.log("in");
+      console.log("[Connected to socket]")
     },
     movement({ digit, number }) {
       this.makeMovement(digit, number);
     }
   },
   data: () => ({
+    somebodyWon: false,
+    winner: "",
     player1: "🍕",
     player2: "🌮",
     turn: "5000",
-    ticTacToeField: {
-      "1": null,
-      "2": null,
-      "3": null,
-      "4": null,
-      "5": null,
-      "6": null,
-      "7": null,
-      "8": null,
-      "9": null
-    }
+    ticTacToeField: { ...initialTicTacToe }
   }),
   methods: {
+    restartGame() {
+      this.somebodyWon = false;
+      this.ticTacToeField = { ...initialTicTacToe };
+      this.$socket.client.emit("playAgain");
+    },
     makeMovement(digit, number) {
       console.log(digit, number);
       if (this.turn === number) {
         this.ticTacToeField[digit] =
           number === "5000" ? this.player1 : this.player2;
-        // const winner = this.validateWin();
+        const winner = this.validateWin();
+        if (winner) {
+          this.somebodyWon = true;
+          this.winner = this.turn === "5000" ? this.player1 : this.player2;
+        }
+        // this.$socket.client.emit("message");
         this.nextTurn();
       }
     },
@@ -103,5 +126,12 @@ export default {
   display: flex;
   margin: 0 auto;
   justify-content: center;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
