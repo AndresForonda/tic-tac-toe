@@ -1,22 +1,27 @@
+/**
+ * Pizz Tac Coe (a Tic Tac Toe Game)
+ */
+
 import Vue from "vue";
-import App from "./App.vue";
+// Import the socket.io libraries and wrapper
 import VueSocketIOExt from "vue-socket.io-extended";
 import io from "socket.io-client";
+// Import he root component
+import App from "./App.vue";
 
-const socket = io("http://192.168.1.116:3300");
+/**
+ * Create a socket connection
+ * Using process.env.VUE_APP_SOCKET_URL, means that the application is
+ * storing the server url where the socket lives from an environment variable
+ */
+const socket = io(process.env.VUE_APP_SOCKET_URL);
 
-import Toasted from "vue-toasted";
-
-const toastedOptions = {
-  duration: 3000,
-};
-
-Vue.use(Toasted, toastedOptions);
-
+// Register the $socket property in the Vue prototype
 Vue.use(VueSocketIOExt, socket);
 
 Vue.config.productionTip = false;
 
+// Rendering the app
 new Vue({
-  render: (h) => h(App),
+  render: h => h(App)
 }).$mount("#app");
