@@ -96,4 +96,12 @@ img {
   padding: 0;
   /* margin-top: 60px; */
 }
+
+.linear-orange-background {
+  background: linear-gradient(
+    0deg,
+    rgba(246, 119, 46, 1) 0%,
+    rgba(253, 45, 45, 1) 100%
+  );
+}
 </style>
