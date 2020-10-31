@@ -3,7 +3,9 @@
     <div
       class="winner-banner-message linear-purple-background flex-center-center"
     >
+      <!-- Show this message/component when the game is draw -->
       <h2>Draw! 😤😱</h2>
+      <!-- Emit the restart-game event on button pressed -->
       <button @click="$emit('restart-game')">Play again</button>
     </div>
   </div>

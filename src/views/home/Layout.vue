@@ -1,14 +1,16 @@
 <template>
   <section>
+    <!-- Board component mounted -->
     <board />
   </section>
 </template>
 <script>
+// Import board component
 import Board from "./content/Layout";
 export default {
   name: "Home",
   components: {
-    Board
+    Board // Register board component
   }
 };
 </script>

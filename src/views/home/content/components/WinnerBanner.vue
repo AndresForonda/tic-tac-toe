@@ -6,6 +6,7 @@
       <h2>We have a winner!</h2>
       <p class="congrats">Congrats</p>
       <p class="winner">{{ winner }}</p>
+      <!-- If the play again button is pressed, emit the restar-game event -->
       <button @click="$emit('restart-game')">Play again</button>
     </div>
   </div>
@@ -14,6 +15,7 @@
 <script>
 export default {
   name: "WinnerBanner",
+  // Receive the winner player value (pizza or taco) as prop
   props: {
     winner: {
       type: String,

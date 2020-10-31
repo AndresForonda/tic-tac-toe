@@ -1,4 +1,5 @@
 <template>
+  <!-- Vue's Mount point -->
   <div id="app">
     <home />
   </div>

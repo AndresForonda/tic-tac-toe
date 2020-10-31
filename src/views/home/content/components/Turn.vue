@@ -7,11 +7,8 @@
 <script>
 export default {
   name: "Turn",
+  // Receive the player (taco or pizza) as prop
   props: {
-    number: {
-      type: String,
-      default: ""
-    },
     player: {
       type: String,
       default: ""
